@@ -12,6 +12,7 @@ import android.widget.EditText;
 
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.spotifynfccreator.adapters.SpotifyAlbumAdapter;
 import com.example.spotifynfccreator.adapters.SpotifyTrackAdapter;
 import com.example.spotifynfccreator.spotifyresponse.SpotifyData;
 
@@ -65,6 +66,13 @@ public class SpotifyInput extends Activity
                 {
                   SpotifyTrackAdapter adapter = new SpotifyTrackAdapter(spotifyData.getTracks()
                           .getItems(), accessToken);
+                  m_recyclerView.setAdapter(adapter);
+                  adapter.notifyDataSetChanged();
+                }
+                else if (spotifyData.getAlbums() != null)
+                {
+                  SpotifyAlbumAdapter adapter =
+                          new SpotifyAlbumAdapter(spotifyData.getAlbums().getItems(), accessToken);
                   m_recyclerView.setAdapter(adapter);
                   adapter.notifyDataSetChanged();
                 }

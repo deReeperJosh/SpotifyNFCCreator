@@ -3,8 +3,6 @@ package com.example.spotifynfccreator.adapters;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,21 +13,17 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.spotifynfccreator.MainActivity;
 import com.example.spotifynfccreator.R;
-import com.example.spotifynfccreator.SpotifyInput;
 import com.example.spotifynfccreator.nfc.NFCWriterActivity;
+import com.example.spotifynfccreator.spotifyresponse.AlbumItem;
 import com.example.spotifynfccreator.spotifyresponse.TrackItem;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.List;
 
-public class SpotifyTrackAdapter extends RecyclerView.Adapter<SpotifyTrackAdapter.ViewHolder>
+public class SpotifyAlbumAdapter extends RecyclerView.Adapter<SpotifyAlbumAdapter.ViewHolder>
 {
   public class ViewHolder extends RecyclerView.ViewHolder
   {
-
     public TextView m_textView;
     public ImageView m_imageView;
     public Button m_button;
@@ -44,19 +38,18 @@ public class SpotifyTrackAdapter extends RecyclerView.Adapter<SpotifyTrackAdapte
     }
   }
 
-  private List<TrackItem> m_trackItemList;
+  private List<AlbumItem> m_albumItemList;
   private String accessToken;
 
-  public SpotifyTrackAdapter(List<TrackItem> items, String token)
+  public SpotifyAlbumAdapter(List<AlbumItem> items, String token)
   {
-    this.m_trackItemList = items;
+    this.m_albumItemList = items;
     this.accessToken = token;
   }
 
   @NonNull @Override
-  public SpotifyTrackAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType)
+  public SpotifyAlbumAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType)
   {
-    Log.d("Spotify", m_trackItemList.toString());
     Context context = parent.getContext();
     LayoutInflater inflater = LayoutInflater.from(context);
 
@@ -67,10 +60,9 @@ public class SpotifyTrackAdapter extends RecyclerView.Adapter<SpotifyTrackAdapte
   }
 
   @Override
-  public void onBindViewHolder(@NonNull SpotifyTrackAdapter.ViewHolder holder, int position)
+  public void onBindViewHolder(@NonNull SpotifyAlbumAdapter.ViewHolder holder, int position)
   {
-
-    TrackItem item = m_trackItemList.get(position);
+    AlbumItem item = m_albumItemList.get(position);
 
     TextView textView = holder.m_textView;
     textView.setText(item.getName());
@@ -83,7 +75,7 @@ public class SpotifyTrackAdapter extends RecyclerView.Adapter<SpotifyTrackAdapte
         imageView.setImageBitmap(image);
       }
     });
-    spotifyImageLoader.execute(item.getAlbum().getImages().get(0).getUrl());
+    spotifyImageLoader.execute(item.getImages().get(0).getUrl());
 
     Button button = holder.m_button;
     button.setOnClickListener(new View.OnClickListener()
@@ -96,12 +88,10 @@ public class SpotifyTrackAdapter extends RecyclerView.Adapter<SpotifyTrackAdapte
         view.getContext().startActivity(nfcIntent);
       }
     });
-
   }
 
   @Override public int getItemCount()
   {
-    Log.d("Spotify", String.valueOf(m_trackItemList.size()));
-    return m_trackItemList.size();
+    return m_albumItemList.size();
   }
 }
