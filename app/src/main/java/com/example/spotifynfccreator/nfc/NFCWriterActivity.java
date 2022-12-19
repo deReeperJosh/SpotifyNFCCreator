@@ -103,50 +103,76 @@ public class NFCWriterActivity extends AppCompatActivity
         count++;
       }
       Log.d("Spotify", blocks.toString());
-      try
+      if(writeDataToCard(blocks, card))
       {
-        card.connect();
-        if (card.authenticateSectorWithKeyA(1, MifareClassic.KEY_DEFAULT))
-        {
-          //Write with block A key
-          for (int i = card.sectorToBlock(1); i < blocks.size() + card.sectorToBlock(1); i++)
-          {
-            Log.d("Spotify",
-                    "Writing to block " + i + " : " + blocks.get(i - card.sectorToBlock(1)).length);
-            card.writeBlock(i, blocks.get(i - card.sectorToBlock(1)));
-          }
-          Log.d("Spotify", "Wrote to block A");
-          Toast.makeText(this, "Successfully wrote to block 5 with key A", Toast.LENGTH_SHORT)
-                  .show();
-        }
-        else if (card.authenticateSectorWithKeyB(1, MifareClassic.KEY_DEFAULT))
-        {
-          //Write with block B key
-          for (int i = card.sectorToBlock(1); i < blocks.size() + card.sectorToBlock(1); i++)
-          {
-            Log.d("Spotify",
-                    "Writing to block " + i + " : " + blocks.get(i - card.sectorToBlock(1)).length);
-            card.writeBlock(i, blocks.get(i - card.sectorToBlock(1)));
-          }
-          Log.d("Spotify", "Wrote to block B");
-          Toast.makeText(this, "Successfully wrote to block 5 with key B", Toast.LENGTH_SHORT)
-                  .show();
-        }
-        else
-        {
-          Log.e("Spotify", "Failed Auth");
-        }
-        card.close();
+        Toast.makeText(this, "Successfully wrote to card", Toast.LENGTH_SHORT).show();
       }
-      catch (IOException e)
+      else
       {
-        Toast.makeText(this, e.getMessage(),
-                Toast.LENGTH_SHORT).show();
-        Log.e("Spotify", e.getLocalizedMessage());
-        e.printStackTrace();
+        Toast.makeText(this, "Failed to write to card", Toast.LENGTH_SHORT).show();
       }
       //StartSearchActivity();
     }
+  }
+
+  private boolean writeDataToCard(ArrayList<byte[]> blocks, MifareClassic card)
+  {
+    try
+    {
+      card.connect();
+      int currentSector = 0;
+      int currentBlock = 1;
+      List<String> alreadyAuthenticated = new ArrayList<>();
+      for (int i = 0; i < blocks.size(); i++)
+      {
+        if ((currentBlock+1) % 4 == 0)
+        {
+          Log.d("Spotify", "Sector Increment");
+          currentSector++;
+          currentBlock++;
+        }
+        if (currentBlock == 0 || (currentBlock+1) % 4 == 0 )
+        {
+          Log.e("Spotify", "should not be writing to key or UID block");
+          return false;
+        }
+        if (!alreadyAuthenticated.isEmpty() && alreadyAuthenticated.contains(String.valueOf(currentSector)))
+        {
+          Log.d("Spotify", "Writing to block: " + currentBlock + " in sector: " + currentSector);
+          card.writeBlock(currentBlock, blocks.get(i));
+        }
+        else {
+          Log.d("Spotify", "Authenticating sector: " + currentSector);
+          if (card.authenticateSectorWithKeyA(currentSector, MifareClassic.KEY_DEFAULT))
+          {
+            Log.d("Spotify", "Writing to block: " + currentBlock + " in sector: " + currentSector);
+            card.writeBlock(currentBlock, blocks.get(i));
+          }
+          else if(card.authenticateSectorWithKeyB(currentSector, MifareClassic.KEY_DEFAULT))
+          {
+            Log.d("Spotify", "Writing to block: " + currentBlock + " in sector: " + currentSector);
+            card.writeBlock(currentBlock, blocks.get(i));
+          }
+          else
+          {
+            return false;
+          }
+          alreadyAuthenticated.add(String.valueOf(currentSector));
+        }
+        currentBlock++;
+      }
+      card.close();
+    }
+    catch (IOException e)
+    {
+      Toast.makeText(this, e.getMessage(),
+              Toast.LENGTH_SHORT).show();
+      Log.e("Spotify", e.getLocalizedMessage());
+      e.printStackTrace();
+      return false;
+    }
+    //StartSearchActivity();
+    return true;
   }
 
   private void StartSearchActivity()
