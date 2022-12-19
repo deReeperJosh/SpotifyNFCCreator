@@ -7,8 +7,11 @@ import android.os.Bundle;
 import android.app.Activity;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Spinner;
 
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -16,15 +19,18 @@ import com.example.spotifynfccreator.adapters.SpotifyAlbumAdapter;
 import com.example.spotifynfccreator.adapters.SpotifyTrackAdapter;
 import com.example.spotifynfccreator.spotifyresponse.SpotifyData;
 
-public class SpotifyInput extends Activity
+import java.util.ArrayList;
+import java.util.List;
+
+public class SpotifyInput extends Activity implements AdapterView.OnItemSelectedListener
 {
   NfcAdapter nfcAdapter;
   PendingIntent pendingIntent;
 
   Button mButton;
   EditText mTitle;
-  EditText mType;
   RecyclerView m_recyclerView;
+  String m_typeString;
 
   @Override
   public void onCreate(Bundle savedInstanceState)
@@ -34,14 +40,33 @@ public class SpotifyInput extends Activity
     mButton = findViewById(R.id.button);
     m_recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
 
+    // Spinner element
+    final Spinner spinner = (Spinner) findViewById(R.id.spinner);
+
+    // Spinner click listener
+    spinner.setOnItemSelectedListener((AdapterView.OnItemSelectedListener) this);
+
+    // Spinner Drop down elements
+    List<String> categories = new ArrayList<String>();
+    categories.add("track");
+    categories.add("album");
+
+    // Creating adapter for spinner
+    ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, categories);
+
+    // Drop down layout style - list view with radio button
+    dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+    // attaching data adapter to spinner
+    spinner.setAdapter(dataAdapter);
+
     mButton.setOnClickListener(new View.OnClickListener()
     {
       public void onClick(View view)
       {
         mTitle = findViewById(R.id.editTextTrack);
-        mType = findViewById(R.id.editTextType);
         String title = mTitle.getText().toString();
-        String type = mType.getText().toString();
+        String type = m_typeString;
         Log.d("Spotify", title + ":" + type);
         if (title == "")
         {
@@ -83,5 +108,17 @@ public class SpotifyInput extends Activity
         }
       }
     });
+  }
+
+  @Override
+  public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+    // On selecting a spinner item
+    String item = parent.getItemAtPosition(position).toString();
+    m_typeString = item;
+  }
+
+  @Override public void onNothingSelected(AdapterView<?> adapterView)
+  {
+    m_typeString = "";
   }
 }
