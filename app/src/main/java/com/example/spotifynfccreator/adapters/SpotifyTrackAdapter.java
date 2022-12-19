@@ -56,7 +56,6 @@ public class SpotifyTrackAdapter extends RecyclerView.Adapter<SpotifyTrackAdapte
   @NonNull @Override
   public SpotifyTrackAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType)
   {
-    Log.d("Spotify", m_trackItemList.toString());
     Context context = parent.getContext();
     LayoutInflater inflater = LayoutInflater.from(context);
 
@@ -101,7 +100,6 @@ public class SpotifyTrackAdapter extends RecyclerView.Adapter<SpotifyTrackAdapte
 
   @Override public int getItemCount()
   {
-    Log.d("Spotify", String.valueOf(m_trackItemList.size()));
     return m_trackItemList.size();
   }
 }

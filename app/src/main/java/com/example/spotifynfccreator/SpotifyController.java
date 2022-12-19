@@ -45,7 +45,6 @@ public class SpotifyController
       Response<SpotifyData> data = spotify.execute();
       if (data.isSuccessful())
       {
-        Log.d("Spotify", data.body().toString());
         return data.body();
       }
       else

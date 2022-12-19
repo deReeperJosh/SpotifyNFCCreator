@@ -67,7 +67,6 @@ public class SpotifyInput extends Activity implements AdapterView.OnItemSelected
         mTitle = findViewById(R.id.editTextTrack);
         String title = mTitle.getText().toString();
         String type = m_typeString;
-        Log.d("Spotify", title + ":" + type);
         if (title == "")
         {
           Log.d("Spotify", "No title");
@@ -80,7 +79,6 @@ public class SpotifyInput extends Activity implements AdapterView.OnItemSelected
         else
         {
           String accessToken = getIntent().getStringExtra("AccessToken");
-          Log.d("Spotify", "Start Search: " + accessToken);
           AsyncTask retrieve = new RetrieveSpotifyData(new SpotifyDataResponse()
           {
             @Override public void processFinish(SpotifyData spotifyData)
