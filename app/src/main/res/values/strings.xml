@@ -98,4 +98,7 @@
     </string>
     <string name="action_settings">Settings</string>
     <string name="write_to_card">Write to Card</string>
+    <string name="present_card">Present Card to NFC Reader :~)</string>
+    <string name="writeSuccess">Card Write Success, press back to return to the Search Screen</string>
+    <string name="cardFailed">Failed to write to card, try again</string>
 </resources>

@@ -9,6 +9,7 @@ import android.nfc.Tag;
 import android.nfc.tech.MifareClassic;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.spotifynfccreator.R;
@@ -50,7 +51,7 @@ public class NFCWriterActivity extends AppCompatActivity
     //Create a PendingIntent object so the Android system can
     //populate it with the details of the tag when it is scanned.
     pendingIntent = PendingIntent.getActivity(this, 0,
-            new Intent(this, this.getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
+            new Intent(this, this.getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), PendingIntent.FLAG_MUTABLE);
   }
 
   @Override
@@ -103,12 +104,15 @@ public class NFCWriterActivity extends AppCompatActivity
         count++;
       }
       Log.d("Spotify", blocks.toString());
+      TextView message = (TextView) findViewById(R.id.spotifyPresentMessage);
       if(writeDataToCard(blocks, card))
       {
+        message.setText(R.string.writeSuccess);
         Toast.makeText(this, "Successfully wrote to card", Toast.LENGTH_SHORT).show();
       }
       else
       {
+        message.setText(R.string.cardFailed);
         Toast.makeText(this, "Failed to write to card", Toast.LENGTH_SHORT).show();
       }
       //StartSearchActivity();

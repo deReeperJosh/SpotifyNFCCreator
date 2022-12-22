@@ -1,16 +1,19 @@
 package com.example.spotifynfccreator;
 
 import android.app.PendingIntent;
+import android.content.Context;
 import android.nfc.NfcAdapter;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.app.Activity;
 import android.util.Log;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 
 import androidx.recyclerview.widget.RecyclerView;
@@ -27,6 +30,7 @@ public class SpotifyInput extends Activity implements AdapterView.OnItemSelected
   NfcAdapter nfcAdapter;
   PendingIntent pendingIntent;
 
+  LinearLayout m_layout;
   Button mButton;
   EditText mTitle;
   RecyclerView m_recyclerView;
@@ -39,6 +43,7 @@ public class SpotifyInput extends Activity implements AdapterView.OnItemSelected
     setContentView(R.layout.spotify_input);
     mButton = findViewById(R.id.button);
     m_recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
+    m_layout = (LinearLayout) findViewById(R.id.inputLayout);
 
     // Spinner element
     final Spinner spinner = (Spinner) findViewById(R.id.spinner);
@@ -64,6 +69,8 @@ public class SpotifyInput extends Activity implements AdapterView.OnItemSelected
     {
       public void onClick(View view)
       {
+        InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(m_layout.getWindowToken(), 0);
         mTitle = findViewById(R.id.editTextTrack);
         String title = mTitle.getText().toString();
         String type = m_typeString;
